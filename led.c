@@ -59,3 +59,15 @@ void led_blue()
 	/*Escribimos el led segun el valor de state*/
 	GPIO_WritePinOutput (GPIOE, 26, 1);
 }
+
+void led_off()
+{
+	/*Escribimos el led segun el valor de state*/
+	GPIO_WritePinOutput (GPIOB, 21, 1);
+
+	/*Escribimos el led segun el valor de state*/
+	GPIO_WritePinOutput (GPIOB, 22, 1);
+
+	/*Escribimos el led segun el valor de state*/
+	GPIO_WritePinOutput (GPIOE, 26, 1);
+}

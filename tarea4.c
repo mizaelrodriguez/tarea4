@@ -52,16 +52,25 @@
 void PORTA_IRQHandler()
 {
 	static uint8_t state = 0;
-	static uint8_t change_color = 0;
 
 	/*Limpiamos la bandera del pin que causo la interrupcion*/
 	PORT_ClearPinsInterruptFlags(PORTA, 1<<4);
 
+	switch (state)
+	{
+	case 0: led_red();
+	state = 1;
+	break;
+	case 1: led_green();
+	state = 2;
+	break;
+	case 2: led_blue();
+	state = 0;
+	break;
+	default: led_off();
+	}
 
-
-	/*Si state es igual a 0 entonces se hace 1 y al revés*/
-	state = ( 0 == state ) ? 1 : 0;
-}
+	}
 
 int main(void) {
 
