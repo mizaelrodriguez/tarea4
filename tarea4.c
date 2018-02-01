@@ -75,10 +75,11 @@ int main(void) {
     /*Habilitar el reloj SCG*/
     CLOCK_EnableClock(kCLOCK_PortB);
     CLOCK_EnableClock(kCLOCK_PortA);
+    CLOCK_EnableClock(kCLOCK_PortE);
 
     /*Configurar el puerto para encender un LED*/
     /* Input pin PORT configuration */
-    port_pin_config_t config_led = {
+    port_pin_config_t config_led_blue = {
     		kPORT_PullDisable,				/*Resistencias deshabilitadas*/
     		kPORT_SlowSlewRate,				/*SlewRate menor velocidad*/
     		kPORT_PassiveFilterEnable,		/*Filtro habilitado*/
@@ -86,6 +87,31 @@ int main(void) {
     		kPORT_LowDriveStrength,			/**/
     		kPORT_MuxAsGpio,				/*Modo GPIO*/
     		kPORT_UnlockRegister };			/**/
+
+
+    /*Configurar el puerto para encender un LED*/
+    /* Input pin PORT configuration */
+    port_pin_config_t config_led_red = {
+    		kPORT_PullDisable,				/*Resistencias deshabilitadas*/
+    		kPORT_SlowSlewRate,				/*SlewRate menor velocidad*/
+    		kPORT_PassiveFilterEnable,		/*Filtro habilitado*/
+    		kPORT_OpenDrainDisable,			/**/
+    		kPORT_LowDriveStrength,			/**/
+    		kPORT_MuxAsGpio,				/*Modo GPIO*/
+    		kPORT_UnlockRegister };			/**/
+
+
+    /*Configurar el puerto para encender un LED*/
+    /* Input pin PORT configuration */
+    port_pin_config_t config_led_green = {
+    		kPORT_PullDisable,				/*Resistencias deshabilitadas*/
+    		kPORT_SlowSlewRate,				/*SlewRate menor velocidad*/
+    		kPORT_PassiveFilterEnable,		/*Filtro habilitado*/
+    		kPORT_OpenDrainDisable,			/**/
+    		kPORT_LowDriveStrength,			/**/
+    		kPORT_MuxAsGpio,				/*Modo GPIO*/
+    		kPORT_UnlockRegister };			/**/
+
 
     /* Input pin PORT configuration */
     port_pin_config_t config_switch = {
@@ -99,7 +125,7 @@ int main(void) {
 
     PORT_SetPinInterruptConfig(PORTA, 4, kPORT_InterruptFallingEdge);
     /* Sets the configuration */
-    PORT_SetPinConfig(PORTB, 21, &config_led);
+    PORT_SetPinConfig(PORTB, 21, &config_led_blue);
     PORT_SetPinConfig(PORTA, 4, &config_switch);
 
 
