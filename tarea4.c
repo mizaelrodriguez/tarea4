@@ -40,6 +40,7 @@
 #include "fsl_debug_console.h"
 #include "fsl_port.h"
 #include "fsl_gpio.h"
+#include "led.h"
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -50,61 +51,16 @@
 
 void PORTA_IRQHandler()
 {
-	static uint8_t state_on = 0;
-	static uint8_t state_off = 1;
+	static uint8_t state = 0;
 	static uint8_t change_color = 0;
 
 	/*Limpiamos la bandera del pin que causo la interrupcion*/
 	PORT_ClearPinsInterruptFlags(PORTA, 1<<4);
 
-	if (change_color == 0)
-	{
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 21, state_on);
 
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 22, state_off);
 
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOE, 26, state_off);
-
-		change_color ++;
-
-	}
-
-	if (change_color == 1)
-	{
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 21, state_off);
-
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 22, state_on);
-
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOE, 26, state_off);
-
-		change_color ++;
-	}
-
-	if (change_color == 2)
-	{
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 21, state_off);
-
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOB, 22, state_off);
-
-		/*Escribimos el led segun el valor de state*/
-		GPIO_WritePinOutput (GPIOE, 26, state_on);
-
-		change_color ++;
-	}
-
-	if (change_color == 3)
-	{
-		change_color = 0;
-	}
-
+	/*Si state es igual a 0 entonces se hace 1 y al revés*/
+	state = ( 0 == state ) ? 1 : 0;
 }
 
 int main(void) {
