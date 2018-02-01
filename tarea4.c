@@ -126,6 +126,8 @@ int main(void) {
     PORT_SetPinInterruptConfig(PORTA, 4, kPORT_InterruptFallingEdge);
     /* Sets the configuration */
     PORT_SetPinConfig(PORTB, 21, &config_led_blue);
+    PORT_SetPinConfig(PORTB, 22, &config_led_red);
+    PORT_SetPinConfig(PORTE, 26, &config_led_green);
     PORT_SetPinConfig(PORTA, 4, &config_switch);
 
 
@@ -136,7 +138,9 @@ int main(void) {
     gpio_pin_config_t switch_config = { kGPIO_DigitalInput, 0 };
 
     /* Sets the configuration */
-    GPIO_PinInit(GPIOB, 21, &led_config);
+    GPIO_PinInit(GPIOB, 21, &led_config_blue);
+    GPIO_PinInit(GPIOB, 22, &led_config_red);
+    GPIO_PinInit(GPIOE, 26, &led_config_green);
     GPIO_PinInit(GPIOA, 4, &switch_config);
 
 
