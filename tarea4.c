@@ -41,6 +41,8 @@
 #include "fsl_port.h"
 #include "fsl_gpio.h"
 #include "led.h"
+#include "fsl_pit.h"
+
 /* TODO: insert other include files here. */
 
 /* TODO: insert other definitions and declarations here. */
@@ -72,6 +74,51 @@ void PORTA_IRQHandler()
 
 	}
 
+void PORTC_IRQHandler()
+{
+	static uint8_t state1 = 0;
+
+	/*Limpiamos la bandera del pin que causo la interrupcion*/
+	PORT_ClearPinsInterruptFlags(PORTC, 1<<6);
+
+	switch (state1)
+	{
+	case 0: led_blue();
+	state1 = 1;
+	break;
+	case 1: led_green();
+	state1 = 2;
+	break;
+	case 2: led_red();
+	state1 = 0;
+	break;
+	default: led_off();
+	}
+
+	}
+
+/*void PIT0_IRQHandler()
+{
+	static uint8_t state2 = 0;
+    PIT_ClearStatusFlags(PIT, kPIT_Chnl_0, kPIT_TimerFlag);
+    uint8_t pitIsrFlag = 0;
+
+	switch (state2)
+	{
+	case 0: led_blue();
+	state2 = 1;
+	break;
+	case 1: led_green();
+	state2 = 2;
+	break;
+	case 2: led_red();
+	state2 = 0;
+	break;
+	default: led_off();
+	}
+}
+*/
+
 int main(void) {
 
   	/* Init board hardware. */
@@ -86,6 +133,7 @@ int main(void) {
     CLOCK_EnableClock(kCLOCK_PortB);
     CLOCK_EnableClock(kCLOCK_PortA);
     CLOCK_EnableClock(kCLOCK_PortE);
+    CLOCK_EnableClock(kCLOCK_PortC);
 
     /*Configurar el puerto para encender un LED*/
     /* Input pin PORT configuration */
@@ -124,7 +172,7 @@ int main(void) {
 
 
     /* Input pin PORT configuration */
-    port_pin_config_t config_switch = {
+    port_pin_config_t config_switch_sw3 = {
     		kPORT_PullDisable,
     		kPORT_SlowSlewRate,
     		kPORT_PassiveFilterEnable,
@@ -133,28 +181,59 @@ int main(void) {
     		kPORT_MuxAsGpio,
     		kPORT_UnlockRegister};
 
+    /* Input pin PORT configuration */
+    port_pin_config_t config_switch_sw2 = {
+    		kPORT_PullDisable,
+    		kPORT_SlowSlewRate,
+    		kPORT_PassiveFilterEnable,
+    		kPORT_OpenDrainDisable,
+    		kPORT_LowDriveStrength,
+    		kPORT_MuxAsGpio,
+    		kPORT_UnlockRegister};
+
+    /* Structure of initialize PIT */
+   // pit_config_t config_pit;
+
+
+
     PORT_SetPinInterruptConfig(PORTA, 4, kPORT_InterruptFallingEdge);
+    PORT_SetPinInterruptConfig(PORTC, 6, kPORT_InterruptFallingEdge);
     /* Sets the configuration */
     PORT_SetPinConfig(PORTB, 21, &config_led_blue);
     PORT_SetPinConfig(PORTB, 22, &config_led_red);
     PORT_SetPinConfig(PORTE, 26, &config_led_green);
-    PORT_SetPinConfig(PORTA, 4, &config_switch);
+    PORT_SetPinConfig(PORTA, 4, &config_switch_sw3);
+    PORT_SetPinConfig(PORTC, 6, &config_switch_sw2);
+    //PIT_GetDefaultConfig(&config_pit);
 
+    /* Init pit module */
+    //PIT_Init(PIT, &config_pit);
+
+    /* Set timer period for channel 0 */
+    //PIT_SetTimerPeriod(PIT, kPIT_Chnl_0, 10000000000);
+
+    /* Enable timer interrupts for channel 0 */
+    //PIT_EnableInterrupts(PIT, kPIT_Chnl_0, kPIT_TimerInterruptEnable);
 
     NVIC_EnableIRQ(PORTA_IRQn);
+    NVIC_EnableIRQ(PORTC_IRQn);
+    //EnableIRQ(PIT0_IRQn);
 
     /* Output pin configuration */
     gpio_pin_config_t led_config_blue = { kGPIO_DigitalOutput, 1 };
     gpio_pin_config_t led_config_red = { kGPIO_DigitalOutput, 1 };
     gpio_pin_config_t led_config_green = { kGPIO_DigitalOutput, 1 };
-    gpio_pin_config_t switch_config = { kGPIO_DigitalInput, 0 };
+    gpio_pin_config_t switch_config_sw3 = { kGPIO_DigitalInput, 0 };
+    gpio_pin_config_t switch_config_sw2 = { kGPIO_DigitalInput, 0 };
 
     /* Sets the configuration */
     GPIO_PinInit(GPIOB, 21, &led_config_blue);
     GPIO_PinInit(GPIOB, 22, &led_config_red);
     GPIO_PinInit(GPIOE, 26, &led_config_green);
-    GPIO_PinInit(GPIOA, 4, &switch_config);
+    GPIO_PinInit(GPIOA, 4, &switch_config_sw3);
+    GPIO_PinInit(GPIOC, 6, &switch_config_sw2);
 
+   // PIT_StartTimer(PIT, kPIT_Chnl_0);
 
     /* Force the counter to be placed into memory. */
     volatile static int i = 0 ;
