@@ -50,16 +50,61 @@
 
 void PORTA_IRQHandler()
 {
-	static uint8_t state = 0;
+	static uint8_t state_on = 0;
+	static uint8_t state_off = 1;
+	static uint8_t change_color = 0;
 
 	/*Limpiamos la bandera del pin que causo la interrupcion*/
 	PORT_ClearPinsInterruptFlags(PORTA, 1<<4);
 
-	/*Escribimos el led segun el valor de state*/
-	GPIO_WritePinOutput (GPIOB, 21, state);
+	if (change_color == 0)
+	{
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 21, state_on);
 
-	/*Si state es igual a 0 entonces se hace 1 y al revés*/
-	state = ( 0 == state ) ? 1 : 0;
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 22, state_off);
+
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOE, 26, state_off);
+
+		change_color ++;
+
+	}
+
+	if (change_color == 1)
+	{
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 21, state_off);
+
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 22, state_on);
+
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOE, 26, state_off);
+
+		change_color ++;
+	}
+
+	if (change_color == 2)
+	{
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 21, state_off);
+
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOB, 22, state_off);
+
+		/*Escribimos el led segun el valor de state*/
+		GPIO_WritePinOutput (GPIOE, 26, state_on);
+
+		change_color ++;
+	}
+
+	if (change_color == 3)
+	{
+		change_color = 0;
+	}
+
 }
 
 int main(void) {
@@ -134,7 +179,9 @@ int main(void) {
     NVIC_EnableIRQ(PORTA_IRQn);
 
     /* Output pin configuration */
-    gpio_pin_config_t led_config = { kGPIO_DigitalOutput, 1 };
+    gpio_pin_config_t led_config_blue = { kGPIO_DigitalOutput, 1 };
+    gpio_pin_config_t led_config_red = { kGPIO_DigitalOutput, 1 };
+    gpio_pin_config_t led_config_green = { kGPIO_DigitalOutput, 1 };
     gpio_pin_config_t switch_config = { kGPIO_DigitalInput, 0 };
 
     /* Sets the configuration */
